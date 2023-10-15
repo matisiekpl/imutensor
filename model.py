@@ -11,8 +11,10 @@ data_folder = 'data'
 
 classes = {
     'CIRCLES_RIGHT':0,
-    'TRIANGLE':1,
-    'SQUARE':2
+    'CIRCLES_LEFT':1,
+    'TRIANGLE':2,
+    'SQUARE':3,
+    'FORWARD_BACK':4,
 }
 
 for class_folder in os.listdir(data_folder):
@@ -25,7 +27,7 @@ for class_folder in os.listdir(data_folder):
             csv_file_path = os.path.join(class_folder_path, csv_file)
             df = pd.read_csv(csv_file_path, sep=';')
             df = df.iloc[:, :-1]
-            df.fillna(0)
+            df = (df-df.min())/(df.max()-df.min())
             data_array = df.to_numpy()
             data.append(data_array)
             labels.append(class_label)
@@ -42,14 +44,11 @@ split_index = int(len(data) * split_ratio)
 x_train, x_test = data[:split_index], data[split_index:]
 y_train, y_test = labels[:split_index], labels[split_index:]
 
-print(x_train.shape)
-print(y_train.shape)
-print(len(classes.keys()))
-
 model = tf.keras.Sequential([
-    tf.keras.layers.LSTM(28),
+    tf.keras.layers.Input((50, 9)),
+    tf.keras.layers.LSTM(22),
     tf.keras.layers.Dense(32, activation='relu'),
-    tf.keras.layers.Dense(3)
+    tf.keras.layers.Dense(len(classes.keys()))
 ])
 
 
@@ -66,6 +65,7 @@ history = model.fit(x_train, y_train, epochs=150,validation_data=(x_test,y_test)
 # plt.legend(['train', 'val'], loc='upper left')
 # plt.show()
 
+model.summary()
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
 plt.title('model loss')
@@ -73,3 +73,5 @@ plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'val'], loc='upper left')
 plt.show()
+
+model.save('model.h5')
