@@ -72,6 +72,6 @@ plt.title('model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'val'], loc='upper left')
-plt.show()
+plt.savefig('loss.png')
 
 model.save('model.h5')
