@@ -27,6 +27,9 @@ for class_folder in os.listdir(data_folder):
             csv_file_path = os.path.join(class_folder_path, csv_file)
             df = pd.read_csv(csv_file_path, sep=';')
             df = df.iloc[:, :-1]
+            # df = df.iloc[:, 0:3]
+            # df = df.iloc[:, 3:6]
+            # df = df.iloc[:, 6:9]
             df = (df-df.min())/(df.max()-df.min())
             data_array = df.to_numpy()
             data.append(data_array)
@@ -45,7 +48,7 @@ x_train, x_test = data[:split_index], data[split_index:]
 y_train, y_test = labels[:split_index], labels[split_index:]
 
 model = tf.keras.Sequential([
-    tf.keras.layers.Input((50, 9)),
+    tf.keras.layers.Input((data.shape[1], data.shape[2])),
     tf.keras.layers.LSTM(22),
     tf.keras.layers.Dense(32, activation='relu'),
     tf.keras.layers.Dense(len(classes.keys()))
@@ -56,7 +59,7 @@ model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-history = model.fit(x_train, y_train, epochs=150,validation_data=(x_test,y_test))
+history = model.fit(x_train, y_train, epochs=100,validation_data=(x_test,y_test))
 # plt.plot(history.history['accuracy'])
 # plt.plot(history.history['val_accuracy'])
 # plt.title('model accuracy')
