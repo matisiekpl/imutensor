@@ -67,6 +67,7 @@ plt.ylabel('accuracy')
 plt.xlabel('epoch')
 plt.legend(['train', 'val'], loc='upper left')
 plt.savefig('acc.png')
+plt.clf()
 
 model.summary()
 plt.plot(history.history['loss'])
