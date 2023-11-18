@@ -13,7 +13,7 @@ jobs:
         with:
           python-version: 3.8
       - name: Install dependencies
-        run: pip install tensorflow pandas matplotlib
+        run: pip install tensorflow pandas matplotlib boto3
       - name: Run the Python script
         run: python model.py
       - uses: actions/upload-artifact@v3
