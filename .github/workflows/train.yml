@@ -26,3 +26,6 @@ jobs:
           path: model.h5
       - name: Upload model to S3
         run: python upload.py
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
