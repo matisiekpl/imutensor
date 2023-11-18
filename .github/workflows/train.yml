@@ -6,21 +6,23 @@ jobs:
   train:
     runs-on: ubuntu-latest
     steps:
-    - name: Check out code
-      uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-    - name: Install dependencies
-      run: pip install tensorflow pandas matplotlib
-    - name: Run the Python script
-      run: python model.py
-    - uses: actions/upload-artifact@v3
-      with:
-        name: loss.png
-        path: loss.png
-    - uses: actions/upload-artifact@v3
-      with:
-        name: model.h5
-        path: model.h5
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: pip install tensorflow pandas matplotlib
+      - name: Run the Python script
+        run: python model.py
+      - uses: actions/upload-artifact@v3
+        with:
+          name: loss.png
+          path: loss.png
+      - uses: actions/upload-artifact@v3
+        with:
+          name: model.h5
+          path: model.h5
+      - name: Upload model to S3
+        run: python upload.py
