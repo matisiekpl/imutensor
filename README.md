@@ -1,4 +1,7 @@
 # imutensor
 
-Link to latest h5 model:
-[model.h5](https://nightly.link/matisiekpl/imutensor/workflows/train/master/model.h5.zip)
+Link to latest model info:
+https://mateuszwozniak.s3.eu-central-1.amazonaws.com/info.json
+
+Link to latest h5 model file:
+https://mateuszwozniak.s3.eu-central-1.amazonaws.com/model.h5
