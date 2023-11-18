@@ -13,6 +13,7 @@ session = boto3.Session(
 def upload_to_s3(local_file, bucket, s3_file):
     s3 = session.client('s3')
     try:
+        s3.delete_object(Bucket=bucket, Key=s3_file)
         s3.upload_file(local_file, bucket, s3_file)
         s3.put_object_acl(Bucket=bucket, Key=s3_file, ACL='public-read')
         print(f"{local_file} uploaded successfully to {bucket}/{s3_file}")
