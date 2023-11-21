@@ -55,7 +55,7 @@ x_train, x_test = data[:split_index], data[split_index:]
 y_train, y_test = labels[:split_index], labels[split_index:]
 
 
-test_loader = torch.utils.data.DataLoader(torch.utils.data.TensorDataset(
+train_loader = torch.utils.data.DataLoader(torch.utils.data.TensorDataset(
     torch.Tensor(x_train), torch.Tensor(y_train)), batch_size=BATCH_SIZE, shuffle=True)
 test_loader = torch.utils.data.DataLoader(torch.utils.data.TensorDataset(
     torch.Tensor(x_test), torch.Tensor(y_test)), batch_size=BATCH_SIZE, shuffle=True)
@@ -81,7 +81,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 for epoch in range(EPOCHS):
-    for batch_idx, (x, y) in enumerate(test_loader):
+    for batch_idx, (x, y) in enumerate(train_loader):
         x = x.to(DEVICE)
         y = y.to(DEVICE)
         optimizer.zero_grad()
@@ -120,6 +120,10 @@ def interference():
     d = request.data.decode('utf-8')
     df = pd.read_csv(StringIO(d), sep=';', skiprows=1)
     df = df.iloc[:, :-1]
+    # df = df.iloc[:, 0:3]
+    df = df.iloc[:, 3:6]
+    # df = df.iloc[:, 6:9]
+    df = (df-df.min())/(df.max()-df.min())
     data = torch.Tensor([df.to_numpy()])
     data = data.to(DEVICE)
     output = model(data)

@@ -3,6 +3,8 @@ import os
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import flask
+import request
 
 data = []
 labels = []
@@ -10,11 +12,11 @@ labels = []
 data_folder = 'data'
 
 classes = {
-    'CIRCLES_RIGHT':0,
-    'CIRCLES_LEFT':1,
-    'TRIANGLE':2,
-    'SQUARE':3,
-    'FORWARD_BACK':4,
+    'CIRCLES_RIGHT': 0,
+    'CIRCLES_LEFT': 1,
+    'TRIANGLE': 2,
+    'SQUARE': 3,
+    'FORWARD_BACK': 4,
 }
 
 for class_folder in os.listdir(data_folder):
@@ -56,10 +58,12 @@ model = tf.keras.Sequential([
 
 
 model.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(
+                  from_logits=True),
               metrics=['accuracy'])
 
-history = model.fit(x_train, y_train, epochs=100,validation_data=(x_test,y_test))
+history = model.fit(x_train, y_train, epochs=100,
+                    validation_data=(x_test, y_test))
 plt.plot(history.history['accuracy'])
 plt.plot(history.history['val_accuracy'])
 plt.title('model accuracy')
@@ -79,3 +83,20 @@ plt.legend(['train', 'val'], loc='upper left')
 plt.savefig('loss.png')
 
 model.save('model.h5')
+
+
+print('Launching interference server...')
+app = flask.Flask(__name__)
+
+
+@app.route('/interference', methods=['POST'])
+def interference():
+    d = request.data.decode('utf-8')
+    df = pd.read_csv(StringIO(d), sep=';', skiprows=1)
+    df = df.iloc[:, :-1]
+    df = (df-df.min())/(df.max()-df.min())
+    prediction = model.predict(df.to_numpy())
+    return json.dumps(prediction)
+
+
+app.run(host='0.0.0.0', port=3199)
