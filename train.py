@@ -10,7 +10,7 @@ from io import StringIO
 import json
 
 BATCH_SIZE = 32
-SPLIT_RATIO = 0.5
+SPLIT_RATIO = 0.8
 EPOCHS = 200
 DEVICE = 'cpu'
 
