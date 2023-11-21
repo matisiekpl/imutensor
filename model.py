@@ -4,7 +4,9 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import flask
-import request
+from flask import request
+from io import StringIO
+import json
 
 data = []
 labels = []
@@ -27,9 +29,9 @@ for class_folder in os.listdir(data_folder):
     for csv_file in os.listdir(class_folder_path):
         if csv_file.endswith('.csv'):
             csv_file_path = os.path.join(class_folder_path, csv_file)
-            df = pd.read_csv(csv_file_path, sep=';')
+            df = pd.read_csv(csv_file_path, sep=';', skiprows=1)
             df = df.iloc[:, :-1]
-            # df = df.iloc[:, 0:3]
+            df = df.iloc[:, 0:3]
             # df = df.iloc[:, 3:6]
             # df = df.iloc[:, 6:9]
             df = (df-df.min())/(df.max()-df.min())
@@ -48,6 +50,9 @@ split_ratio = 0.8
 split_index = int(len(data) * split_ratio)
 x_train, x_test = data[:split_index], data[split_index:]
 y_train, y_test = labels[:split_index], labels[split_index:]
+
+print(x_train.shape)
+print(x_test.shape)
 
 model = tf.keras.Sequential([
     tf.keras.layers.Input((data.shape[1], data.shape[2])),
@@ -83,3 +88,25 @@ plt.legend(['train', 'val'], loc='upper left')
 plt.savefig('loss.png')
 
 model.save('model.h5')
+
+
+print('Launching interference server...')
+app = flask.Flask(__name__)
+
+
+@app.route('/interference', methods=['POST'])
+def interference():
+    d = request.data.decode('utf-8')
+    print(d)
+    df = pd.read_csv(StringIO(d), sep=';', skiprows=1)
+    df = df.iloc[:, :-1]
+    # df = df.iloc[:, 0:3]
+    df = df.iloc[:, 3:6]
+    # df = df.iloc[:, 6:9]
+    df = (df-df.min())/(df.max()-df.min())
+    prediction = model.predict([np.array([df.to_numpy()])])
+    prediction = np.argmax(prediction, axis=1)
+    return str(prediction[0])
+
+
+app.run(host='0.0.0.0', port=3199)
