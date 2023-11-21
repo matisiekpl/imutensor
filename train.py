@@ -118,6 +118,7 @@ app = flask.Flask(__name__)
 @app.route('/interference', methods=['POST'])
 def interference():
     d = request.data.decode('utf-8')
+    print(d)
     df = pd.read_csv(StringIO(d), sep=';', skiprows=1)
     df = df.iloc[:, :-1]
     df = df.iloc[:, 0:3]
