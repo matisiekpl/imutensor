@@ -83,20 +83,3 @@ plt.legend(['train', 'val'], loc='upper left')
 plt.savefig('loss.png')
 
 model.save('model.h5')
-
-
-print('Launching interference server...')
-app = flask.Flask(__name__)
-
-
-@app.route('/interference', methods=['POST'])
-def interference():
-    d = request.data.decode('utf-8')
-    df = pd.read_csv(StringIO(d), sep=';', skiprows=1)
-    df = df.iloc[:, :-1]
-    df = (df-df.min())/(df.max()-df.min())
-    prediction = model.predict(df.to_numpy())
-    return json.dumps(prediction)
-
-
-app.run(host='0.0.0.0', port=3199)

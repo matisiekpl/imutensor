@@ -38,7 +38,7 @@ for class_folder in os.listdir(data_folder):
             # df = df.iloc[:, 0:3]
             # df = df.iloc[:, 3:6]
             # df = df.iloc[:, 6:9]
-            # df = (df-df.min())/(df.max()-df.min())
+            df = (df-df.min())/(df.max()-df.min())
             data_array = df.to_numpy()
             data.append(data_array)
             labels.append(class_label)
@@ -121,7 +121,7 @@ def interference():
     df = pd.read_csv(StringIO(d), sep=';', skiprows=1)
     df = df.iloc[:, :-1]
     # df = df.iloc[:, 0:3]
-    df = df.iloc[:, 3:6]
+    # df = df.iloc[:, 3:6]
     # df = df.iloc[:, 6:9]
     df = (df-df.min())/(df.max()-df.min())
     data = torch.Tensor([df.to_numpy()])
