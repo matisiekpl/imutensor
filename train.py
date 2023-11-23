@@ -11,7 +11,7 @@ import json
 
 BATCH_SIZE = 32
 SPLIT_RATIO = 0.8
-EPOCHS = 100
+EPOCHS = 200
 DEVICE = 'cpu'
 
 data = []
@@ -35,7 +35,7 @@ for class_folder in os.listdir(data_folder):
             csv_file_path = os.path.join(class_folder_path, csv_file)
             df = pd.read_csv(csv_file_path, sep=';', skiprows=1)
             df = df.iloc[:, :-1]
-            # df = df.iloc[:, 0:3]
+            df = df.iloc[:, 0:3]
             # df = df.iloc[:, 3:6]
             # df = df.iloc[:, 6:9]
             df = (df-df.min())/(df.max()-df.min())
@@ -121,7 +121,7 @@ def interference():
     print(d)
     df = pd.read_csv(StringIO(d), sep=';', skiprows=1)
     df = df.iloc[:, :-1]
-    # df = df.iloc[:, 0:3]
+    df = df.iloc[:, 0:3]
     # df = df.iloc[:, 3:6]
     # df = df.iloc[:, 6:9]
     df = (df-df.min())/(df.max()-df.min())
