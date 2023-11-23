@@ -11,12 +11,12 @@ import json
 
 BATCH_SIZE = 32
 SPLIT_RATIO = 0.8
-EPOCHS = 100
+EPOCHS = 200
 DEVICE = 'cpu'
 
 data = []
 labels = []
-data_folder = 'data'
+data_folder = 'data2'
 classes = {
     'CIRCLES_RIGHT': 0,
     'CIRCLES_LEFT': 1,
