@@ -10,11 +10,10 @@ LSTM-based classifier written in PyTorch for detecting predefined gestures from 
 
 This machine learning model takes imu data as a series in `.csv` in format like:
 ```csv
-gyro_x;gyro_y;gyro_z;magnetometer_x;magnetometer_y;magnetometer_z;accelerometer_x;accelerometer_y;accelerometer_z;
-0.48433977;-0.28244883;1.5225816;-23.34;3.36;-42.78;-2.6527755;-0.9696517;9.857227;
-0.2222786;-0.95989835;1.2843442;-23.519999;3.1799998;-43.32;-0.4141969;-0.12689269;11.772589;
-0.61995184;-0.38385245;2.3576343;-24.66;3.8999999;-42.899998;-0.7062895;-1.733402;15.330672;
-...
+gyro_x;gyro_y;gyro_z;magnetometer_x;magnetometer_y;magnetometer_z;accelerometer_x;accelerometer_y;accelerometer_z
+0.48433977;-0.28244883;1.5225816;-23.34;3.36;-42.78;-2.6527755;-0.9696517;9.857227
+0.2222786;-0.95989835;1.2843442;-23.519999;3.1799998;-43.32;-0.4141969;-0.12689269;11.772589
+0.61995184;-0.38385245;2.3576343;-24.66;3.8999999;-42.899998;-0.7062895;-1.733402;15.330672
 ``` 
 and classifies it into one from following classes:
 ```python
