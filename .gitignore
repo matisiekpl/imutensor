@@ -160,6 +160,7 @@ cython_debug/
 .idea/
 *.keras
 *.h5
+*.pt
 
 loss.png
 acc.png
