@@ -1,6 +1,11 @@
 # Imutensor
 LSTM-based classifier written in PyTorch for detecting predefined gestures from IMU sensor.
 
+> This project is developed for Machine Learning course on AGH University of Science and Technology.
+> Authors:
+> - Mateusz Woźniak
+> - Maciej Pawłowski
+
 ## Task
 
 This machine learning model takes imu data as a series in `.csv` in format like:
