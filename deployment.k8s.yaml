@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: imutensor
+  labels:
+    app: imutensor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: imutensor
+  template:
+    metadata:
+      labels:
+        app: imutensor
+    spec:
+      containers:
+        - name: api
+          image: registry.enteam.pl/imutensor/api:v0
+          ports:
+            - containerPort: 3199
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: imutensor
+spec:
+  selector:
+    app: imutensor
+  ports:
+    - protocol: TCP
+      port: 3199
+      targetPort: 3199
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: imutensor
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: imutensor.mateuszwozniak.dev
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: imutensor
+              servicePort: 3199

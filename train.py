@@ -53,7 +53,6 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 training_loss = []
 validation_loss = []
 
-training_acc = []
 validation_acc = []
 
 for epoch in range(epochs):
@@ -88,14 +87,23 @@ for epoch in range(epochs):
                     validation_step_loss.append(criterion(output, y))
 
             accuracy = num_correct / num_samples
+            validation_acc.append(accuracy)
             print(
                 f'Epoch {epoch+1}, Batch {batch_idx}, Loss {loss.item()}, Accuracy {accuracy}')
             validation_loss.append(np.array(validation_step_loss).mean())
     training_loss.append(np.array(step_loss).mean())
 
 torch.save(model.state_dict(), 'model.pt')
+
 plt.title('Loss')
 plt.plot(training_loss, label='train_loss')
 plt.plot(validation_loss, label='val_loss')
 plt.legend()
 plt.savefig('loss.png')
+
+plt.clf()
+
+plt.title('Accuracy')
+plt.plot(validation_acc, label='val_acc')
+plt.legend()
+plt.savefig('acc.png')
