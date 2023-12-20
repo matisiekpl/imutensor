@@ -27,6 +27,11 @@ classes = {
 }
 ```
 
+## Dataset collection
+We developed mobile app for Android in Kotlin that grabs data from imu sensor and uploads it into Golang microservice which archives files.
+
+![screenshot.jpg](screenshot.jpg)
+
 ## Model
 We are using LSTM layer with two Linear transformations. Recurrent neural network is used, because gesture-classification task is time-invariant (`.csv` files has diffrent number of timesteps).
 ```python
