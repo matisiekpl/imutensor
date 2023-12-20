@@ -50,6 +50,9 @@ class Net(nn.Module):
         return x
 ```
 
+## Quality
+We are able to achieve `~89%` accuracy on validation dataset using gyroscope-only features.
+
 ## Inference
 Model is trained inside `docker build` and saved into `model.pt` weights files. `serve.py` file launches `flask` HTTP server which exposes `POST /inferece` endpoint on port `3199`.
 
