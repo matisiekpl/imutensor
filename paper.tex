@@ -7,7 +7,7 @@
 
 \title{
 \rule{\linewidth}{3pt}
-Klasyfikator ruchów czujnika nawigacji inercyjnej na podstawie rekurencyjnej sieci neuronowej
+Klasyfikator ruchów czujnika IMU na podstawie rekurencyjnej sieci neuronowej
 \rule{\linewidth}{1pt}
 }
 \author{
@@ -24,6 +24,12 @@ Klasyfikator ruchów czujnika nawigacji inercyjnej na podstawie rekurencyjnej si
 \maketitle
 
 \section{Abstrakt}
-\subsection{Wprowadzenie}
+
+Przedmiotem tego artykułu jest omówienie realizacji zadania klasyfikacji ruchów z urządzenia IMU (Inertial Measurement Unit). Czujnik IMU określa przyśpieszenia postępowe i kątowe używając żyroskopu, akcelerometru i magnetometru. 
+IMU jest powszechnie stosowane w lotnictwie, robotyce, wirtualnej rzeczywistości i medycynie. W lotnictwie umożliwia precyzyjne sterowanie statkami powietrznymi, a w robotyce wspomaga autonomiczne poruszanie się robotów. Jednym z zastosowań klasyfikatora ruchów może być detekcja przeciągnięcia samolotu. Z kolei w motoryzacji, IMU znajduje użycie w systemach kontroli stabilności pojazdów oraz w zaawansowanych systemach wspomagania kierowcy, które poprawiają bezpieczeństwo. My chcemy zaproponować realizację klasyfikatora 5 z góry ustalonych ruchów używając rekurencyjną sieć neuronowej. 
+\\\\Do pomiarów wykorzystaliśmy smartfon wyposażony w czujnik IMU. Implementację modelu wykonaliśmy we frameworku PyTorch. Trening sieci neuronowej była wykonywany na Apple Macbook M1 16GB.
+
+\subsection{Zbiór danych}
+
 
 \end{document}
