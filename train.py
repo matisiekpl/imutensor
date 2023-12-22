@@ -25,7 +25,9 @@ for class_folder in os.listdir(data_folder):
             df = df.iloc[:, feature_filter[0]:feature_filter[1]]
             df = (df-df.min())/(df.max()-df.min())
             data_array = df.to_numpy()
-            data.append(data_array)
+            result_array = np.zeros((100, 3))
+            result_array[:data_array.shape[0], :] = data_array
+            data.append(result_array)
             labels.append(class_label)
 
 data = np.array(data)
