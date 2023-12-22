@@ -164,3 +164,8 @@ cython_debug/
 
 loss.png
 acc.png
+
+*.aux
+*.fdb_latexmk
+*.fls
+*.synctex.gz
