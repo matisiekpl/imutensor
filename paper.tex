@@ -40,6 +40,7 @@ Dane zostały zebrane z urządzenia Samsung Galaxy S10e 2019. Każdy ruch zosta�
 Ruchy były wykonywane przy włączonej aplikacji mobilnej napisanej w Kotlinie (rys. 1).
 
 \begin{figure}
+\label{fig:screenshot}
 \includegraphics[width=5cm]{s1.png}
 \centering
 \caption{Aplikacja mobilna do zbierania danych z czujnika IMU}
@@ -78,10 +79,19 @@ Zebraliśmy dane dla następujących klas:
 \end{tabular}
 \end{center}
 
+Dane zostały załadowane do tensora o kszałcie $(B, T, C)$, gdzie
+\begin{itemize}
+\item $B$ - wsad
+\item $T$ - oś czasu
+\item $C$ - cechy (3, ponieważ odrzuciliśmy pomiary z magnetometru i żyroskopu)
+\end{itemize}  
+
+W przypadku, gdy sample były różnej długości, tensor został dopełniony zerami, by $T$ było równe 100. Dzięki temu tensor stawał się jednorodny [4]. 
+
 \section{Model}
 
 Ze względu na to, że zadanie klasyfikacji ruchów ma być niezależne od czasu, tzn. że ruch może zawierać dowolną ilość sampli zdecydowaliśmy się użyć rekurencyjnej sieci neuronowej z komórką LSTM.
-Long Short-Term Memory (LSTM) to rodzaj architektury sieci neuronowej rekurencyjnej (RNN), zaprojektowanej w celu przezwyciężenia ograniczeń tradycyjnych RNN w przechwytywaniu i uczeniu się długoterminowych zależności w danych sekwencyjnych. LSTMy zostały wprowadzone przez Seppa Hochreitera i Jürgena Schmidhubera w 1997 roku. Chcemy, aby sieć neuronowa nauczyła się zaleności w czasie pomiędzy zmianami w przyśpieszeniach czujnika. W związku z tym w pierwszym podejściu zdecydowaliśmy sprawdzić architekturę składającą się z 32 komórek LSTM oraz dwóch transformacji liniowych $nn.Linear()$ o wielkości 24 i 5. Na ostatniej warstwie została zastosowana funkcja aktywacji $softmax$ by uzyskać dystrybucję prawdopodobieństwa klas (realizuje to $nn.CrossEntropyLoss()$)
+Long Short-Term Memory (LSTM) to rodzaj architektury sieci neuronowej rekurencyjnej (RNN), zaprojektowanej w celu przezwyciężenia ograniczeń tradycyjnych RNN w przechwytywaniu i uczeniu się długoterminowych zależności w danych sekwencyjnych. LSTMy zostały wprowadzone przez Seppa Hochreitera i Jürgena Schmidhubera w 1997 roku [1]. Chcemy, aby sieć neuronowa nauczyła się zaleności w czasie pomiędzy zmianami w przyśpieszeniach czujnika [2][3]. W związku z tym w pierwszym podejściu zdecydowaliśmy sprawdzić architekturę składającą się z 32 komórek LSTM oraz dwóch transformacji liniowych $nn.Linear()$ o wielkości 24 i 5. Na ostatniej warstwie została zastosowana funkcja aktywacji $softmax$ by uzyskać dystrybucję prawdopodobieństwa klas (realizuje to $nn.CrossEntropyLoss()$)
 
 
 Po kilku próbach znaleźlimy hiperparametry modelu, które dają najlepsze zachowanie sieci. LSTM musi mieć 22 komórki, a warstwa gęsta musi mieć 32 neurony. Przeszukiwanie przestrzeni hiperparametrów zostało zrealizowane metodyką gridsearch. Finalny model ma następującą architekturę:
@@ -110,7 +120,9 @@ class Net(nn.Module):
 
 Model osiąga zbieżność dostarczając przy tym jakościowe predykcje. Zadanie znajdowania zależności między odczytami dalego od siebie nie jest trywialne, aczkolwiek optymalizator jest w stanie znaleźć odpowiedni kierunek by dostosować wagi sieci (rys. 2).
 Użyty optymalizator to $Adam$ ze współczynnikiem uczenia $0.001$
- Uzyskana precyzja to ok. 90\% (rys. 3). 
+ Uzyskana precyzja to ok. 90\% (rys. 3). Warto zaznaczyć, że aby osiągnąć takie wyniki musieliśmy uprościć ilość cech do 3, wybierając dane jedynie z żyroskopu. Użycie innych cech powodowało spadki jakości predykcji.
+
+Co więcej, dostrzegliśmy różnice w zakresach odczytów używając kilku czujników IMU. Pomiary znacząco różniły się od siebie pomiędzy markami i modelami smartfonów. Przykładowy odczyt na rys. 4. W związku z tym całe badanie oparliśmy na jednym urządzeniu Samsung Galaxy S10e.
 
 \begin{figure}
   \includegraphics[width=13cm]{loss.png}
@@ -124,8 +136,41 @@ Użyty optymalizator to $Adam$ ze współczynnikiem uczenia $0.001$
   \caption{Wykres precyzji na zbiorze walidacyjnym}
 \end{figure}
 
+\begin{figure}
+  \includegraphics[width=16cm]{sample.png}
+  \centering
+  \caption{Przykładowy odczyt ruchu dla klasy CIRCLES\_RIGHT}
+\end{figure}
+
 \section{Wnioski}
 
-c
+Na podstawie metryk modelu można stwierdzić, że decyzja o wykorzystaniu rekurencyjnej sieci neuronowej była trafna. Zaproponowana sieć neuronowa cechuje się wysoką skutecznością w zadaniu klasyfikacji ruchów z urządzenia IMU.
+
+\section{Inferencja}
+
+Ze względu na to, że inferencja na smartfonie w przypadku rekurencyjnych sieci neuronowych jest trudna, zdecydowaliśmy się uruchomić zdalny serwer predykcji. Zastosowaliśmy iteracyjną metodologię prac nad projektem: 
+
+\begin{enumerate}
+  \item Wytrenuj model na lokalnym sprzęcie (laptop).
+  \item Zbuduj obraz Dockera z wagami zawartymi w środku i wypchnij go do rejestru
+  \item Na serwerze zdalnym: ściągnij obraz i uruchom serwer Flask
+\end{enumerate}
+
+Dzięki temu byliśmy w stanie szybko ewaluować jakość modelu. Aplikacja mobilna wykonuje żądanie HTTP POST do serwera inferencji, by ten zwrócił wyniki.
+
+\begin{thebibliography}{9}
+  
+  \bibitem{}
+  Sepp Hochreiter and Jürgen Schmidhuber. 1997. Long short-term memory. Neural Comput. 9, 8 (1997), 1735–1780.
+
+  \bibitem{}
+  Rivera, Patricio, et al. "Recognition of human hand activities based on a single wrist imu using recurrent neural networks." Int. J. Pharma Med. Biol. Sci 6.4 (2017): 114-118.
+  
+  \bibitem{}
+  Ashry, Sara, Reda Elbasiony, and Walid Gomaa. "An LSTM-based descriptor for human activities recognition using IMU sensors." Proceedings of the 15th International Conference on Informatics in Control, Automation and Robotics, ICINCO. Vol. 1. 2018.
+
+  \bibitem{}
+  Staudemeyer, Ralf C., and Eric Rothstein Morris. "Understanding LSTM--a tutorial into long short-term memory recurrent neural networks." (2019).
+\end{thebibliography}
 
 \end{document}
