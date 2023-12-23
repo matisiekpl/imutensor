@@ -7,6 +7,7 @@
 \usepackage{graphicx}
 \usepackage{pythonhighlight}
 \usepackage{subfig}
+\usepackage{float}
 \graphicspath{ {.} }
 
 
@@ -39,7 +40,7 @@ Dane zostały zebrane z urządzenia Samsung Galaxy S10e 2019. Każdy ruch zosta�
 
 Ruchy były wykonywane przy włączonej aplikacji mobilnej napisanej w Kotlinie (rys. 1).
 
-\begin{figure}
+\begin{figure}[h]
 \label{fig:screenshot}
 \includegraphics[width=5cm]{s1.png}
 \centering
@@ -58,6 +59,8 @@ gyro_x;gyro_y;gyro_z;magnetometer_x;...
 -0.7575493;-0.8077929;-1.488984;-44.28;...
 0.06895141;-1.5170075;-2.1273382;-46.14;...
 \end{verbatim}
+
+\pagebreak
 
 Zebraliśmy dane dla następujących klas:
 
@@ -119,24 +122,27 @@ class Net(nn.Module):
 \section{Obserwacje}
 
 Model osiąga zbieżność dostarczając przy tym jakościowe predykcje. Zadanie znajdowania zależności między odczytami dalego od siebie nie jest trywialne, aczkolwiek optymalizator jest w stanie znaleźć odpowiedni kierunek by dostosować wagi sieci (rys. 2).
-Użyty optymalizator to $Adam$ ze współczynnikiem uczenia $0.001$
- Uzyskana precyzja to ok. 90\% (rys. 3). Warto zaznaczyć, że aby osiągnąć takie wyniki musieliśmy uprościć ilość cech do 3, wybierając dane jedynie z żyroskopu. Użycie innych cech powodowało spadki jakości predykcji.
 
-Co więcej, dostrzegliśmy różnice w zakresach odczytów używając kilku czujników IMU. Pomiary znacząco różniły się od siebie pomiędzy markami i modelami smartfonów. Przykładowy odczyt na rys. 4. W związku z tym całe badanie oparliśmy na jednym urządzeniu Samsung Galaxy S10e.
 
-\begin{figure}
-  \includegraphics[width=13cm]{loss.png}
+\begin{figure}[H]
+  \includegraphics[height=10cm]{loss.png}
   \centering
   \caption{Wykres funkcji straty}
 \end{figure}
 
-\begin{figure}
-  \includegraphics[width=13cm]{acc.png}
+Użyty optymalizator to $Adam$ ze współczynnikiem uczenia $0.001$
+ Uzyskana precyzja to ok. 90\% (rys. 3). Warto zaznaczyć, że aby osiągnąć takie wyniki musieliśmy uprościć ilość cech do 3, wybierając dane jedynie z żyroskopu. Użycie innych cech powodowało spadki jakości predykcji.
+
+ \begin{figure}[H]
+  \includegraphics[height=9cm]{acc.png}
   \centering
   \caption{Wykres precyzji na zbiorze walidacyjnym}
 \end{figure}
 
-\begin{figure}
+Co więcej, dostrzegliśmy różnice w zakresach odczytów używając kilku czujników IMU. Pomiary znacząco różniły się od siebie pomiędzy markami i modelami smartfonów. Przykładowy odczyt na rys. 4. W związku z tym całe badanie oparliśmy na jednym urządzeniu Samsung Galaxy S10e.
+
+
+\begin{figure}[H]
   \includegraphics[width=16cm]{sample.png}
   \centering
   \caption{Przykładowy odczyt ruchu dla klasy CIRCLES\_RIGHT}
