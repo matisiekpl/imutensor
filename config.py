@@ -3,6 +3,6 @@ feature_filter = (0, 3)  # use only gyro
 # feature_filter = (6, 9)  # use only accelerometer
 batch_size = 32
 split_ratio = 0.8
-epochs = 200
+epochs = 300
 device = 'cpu'
 data_folder = 'data3'

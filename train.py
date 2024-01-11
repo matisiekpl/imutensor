@@ -140,7 +140,6 @@ plt.legend()
 plt.savefig('acc.png')
 
 
-model = Net(3).to(device)
 model.eval()
 
 app = flask.Flask(__name__)
@@ -159,8 +158,10 @@ def interference():
     result_array[:data_array.shape[0], :] = data_array
     data = torch.Tensor(result_array).unsqueeze(0).to(device)
     output = model(data)
+    _, predicted = torch.max(output.cpu().detach(), 1)
     output = output.cpu().detach().numpy()
     print(output)
+    print(predicted)
     return json.dumps(output.tolist())
 
 
