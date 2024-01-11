@@ -37,7 +37,7 @@ IMU jest powszechnie stosowane w lotnictwie, robotyce, wirtualnej rzeczywistośc
 \section{Zbiór danych}
 Dane zostały zebrane z urządzenia Samsung Galaxy S10e 2019. Każdy ruch został zebrany ręcznie a seria danych z czujników była zapisywana do pliku $csv$ o ilości wierszy takiej jak ilość kroków czasowych. Interwał samplowania pomiaru z czujnika ustaliliśmy na $50ms$. To znaczy, że w ciągu każdej sekundy trwania ruchu następowało 20 odczytów.
 
-Ruchy były wykonywane przy włączonej aplikacji mobilnej napisanej w Kotlinie (rys. 1).
+Ruchy były wykonywane przy włączonej aplikacji mobilnej napisanej w Kotlinie (rys. 2).
 
 \begin{figure}[h]
 \label{fig:screenshot}
@@ -48,7 +48,7 @@ Ruchy były wykonywane przy włączonej aplikacji mobilnej napisanej w Kotlinie 
 
 Dane były wysyłane na zdalny serwer na którym był uruchomiony mikroserwis HTTP napisany w Go. Mikroserwis zbierał dane i zapisywał je na dysk. Dzięki temu zbieranie danych odbywało się sprawnie, a mikroserwis dawał nam informacje o ilości ruchów dla każdej z klas.
 
-Przykładowy plik $csv$:
+Przykładowy plik $csv$ (oraz jego wizualizacja na rys. 1):
 \begin{verbatim}  
 gyro_x;gyro_y;gyro_z;magnetometer_x;...
 -0.062384613;-0.15294538;-0.32650748;-43.62;...
@@ -58,6 +58,13 @@ gyro_x;gyro_y;gyro_z;magnetometer_x;...
 -0.7575493;-0.8077929;-1.488984;-44.28;...
 0.06895141;-1.5170075;-2.1273382;-46.14;...
 \end{verbatim}
+
+
+\begin{figure}[H]
+  \includegraphics[width=16cm]{sample.png}
+  \centering
+  \caption{Przykładowy odczyt ruchu dla klasy CIRCLES\_RIGHT}
+\end{figure}
 
 \pagebreak
 
@@ -120,7 +127,7 @@ class Net(nn.Module):
 
 \section{Obserwacje}
 
-Model osiąga zbieżność dostarczając przy tym jakościowe predykcje. Zadanie znajdowania zależności między odczytami daleko od siebie nie jest trywialne, aczkolwiek optymalizator jest w stanie znaleźć odpowiedni kierunek by dostosować wagi sieci (rys. 2).
+Model osiąga zbieżność dostarczając przy tym jakościowe predykcje. Zadanie znajdowania zależności między odczytami daleko od siebie nie jest trywialne, aczkolwiek optymalizator jest w stanie znaleźć odpowiedni kierunek by dostosować wagi sieci (rys. 3).
 
 
 \begin{figure}[H]
@@ -130,7 +137,7 @@ Model osiąga zbieżność dostarczając przy tym jakościowe predykcje. Zadanie
 \end{figure}
 
 Użyty optymalizator to $Adam$ ze współczynnikiem uczenia $0.001$
- Uzyskana precyzja to ok. 90\% (rys. 3). Wykorzystaliśmy wszystkie cechy (3 osie żyroskopu, 3 osie akcelerometru, 3 osie magnetometru)
+ Uzyskana precyzja to ok. 90\% (rys. 4). Wykorzystaliśmy wszystkie cechy (3 osie żyroskopu, 3 osie akcelerometru, 3 osie magnetometru). Macierz błędów widoczna na rys. 5.
 
  \begin{figure}[H]
   \includegraphics[height=9cm]{acc.png}
@@ -138,14 +145,13 @@ Użyty optymalizator to $Adam$ ze współczynnikiem uczenia $0.001$
   \caption{Wykres precyzji na zbiorze walidacyjnym}
 \end{figure}
 
-Co więcej, dostrzegliśmy różnice w zakresach odczytów używając kilku czujników IMU. Pomiary znacząco różniły się od siebie pomiędzy markami i modelami smartfonów. Przykładowy odczyt na rys. 4. W związku z tym całe badanie oparliśmy na jednym urządzeniu Samsung Galaxy S10e.
-
-
 \begin{figure}[H]
-  \includegraphics[width=16cm]{sample.png}
+  \includegraphics[height=9cm]{conf.png}
   \centering
-  \caption{Przykładowy odczyt ruchu dla klasy CIRCLES\_RIGHT}
+  \caption{Wykres precyzji na zbiorze walidacyjnym}
 \end{figure}
+
+Co więcej, dostrzegliśmy różnice w zakresach odczytów używając kilku czujników IMU. Pomiary znacząco różniły się od siebie pomiędzy markami i modelami smartfonów. W związku z tym całe badanie oparliśmy na jednym urządzeniu Samsung Galaxy S10e.
 
 \section{Inferencja}
 
