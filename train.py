@@ -15,6 +15,8 @@ import pandas as pd
 from config import feature_filter, device
 import logging
 import sys
+from sklearn.metrics import confusion_matrix
+import seaborn as sn
 
 data = []
 labels = []
@@ -61,29 +63,11 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 training_loss = []
 validation_loss = []
-
 validation_acc = []
 
+y_pred = []
+y_true = []
 
-class EarlyStopper:
-    def __init__(self, patience=1, min_delta=0):
-        self.patience = patience
-        self.min_delta = min_delta
-        self.counter = 0
-        self.min_validation_loss = float('inf')
-
-    def early_stop(self, validation_loss):
-        if validation_loss < self.min_validation_loss:
-            self.min_validation_loss = validation_loss
-            self.counter = 0
-        elif validation_loss > (self.min_validation_loss + self.min_delta):
-            self.counter += 1
-            if self.counter >= self.patience:
-                return True
-        return False
-
-
-early_stopper = EarlyStopper(patience=3, min_delta=10)
 for epoch in range(epochs):
     step_loss = []
     for batch_idx, (x, y) in enumerate(train_loader):
@@ -98,8 +82,6 @@ for epoch in range(epochs):
         optimizer.step()
         step_loss.append(loss.item())
         validation_step_loss = []
-        if early_stopper.early_stop(loss):
-            break
         if batch_idx % 100 == 0:
             model.eval()
 
@@ -114,8 +96,11 @@ for epoch in range(epochs):
                     _, predicted = torch.max(output.data, 1)
                     num_samples += y.size(0)
                     num_correct += (predicted == y).sum().item()
-                    y = F.one_hot(y.long(), len(classes.keys())).float()
-                    validation_step_loss.append(criterion(output, y))
+                    validation_step_loss.append(criterion(
+                        output,                      F.one_hot(y.long(), len(classes.keys())).float()))
+                    y_pred.extend(
+                        (torch.max(torch.exp(output), 1)[1]).data.cpu().numpy())
+                    y_true.extend(y.cpu().numpy())
 
             accuracy = num_correct / num_samples
             validation_acc.append(accuracy)
@@ -139,6 +124,12 @@ plt.plot(validation_acc, label='val_acc')
 plt.legend()
 plt.savefig('acc.png')
 
+cf_matrix = confusion_matrix(y_true, y_pred)
+df_cm = pd.DataFrame(cf_matrix / np.sum(cf_matrix, axis=1)[:, None], index=[
+                     i for i in classes.keys()], columns=[i for i in classes.keys()])
+plt.figure(figsize=(12, 7))
+sn.heatmap(df_cm, annot=True)
+plt.savefig('conf.png')
 
 model.eval()
 
