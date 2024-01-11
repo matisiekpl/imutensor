@@ -162,8 +162,8 @@ cython_debug/
 *.h5
 *.pt
 
-loss.png
-acc.png
+# loss.png
+# acc.png
 
 *.aux
 *.fdb_latexmk
