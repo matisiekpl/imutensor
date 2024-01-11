@@ -163,6 +163,10 @@ Dzięki temu byliśmy w stanie szybko ewaluować jakość modelu. Aplikacja mobi
 
 Na podstawie metryk modelu można stwierdzić, że decyzja o wykorzystaniu rekurencyjnej sieci neuronowej była trafna. Zaproponowana sieć neuronowa cechuje się wysoką skutecznością w zadaniu klasyfikacji ruchów z urządzenia IMU.
 
+\section{Dyskusja}
+
+Warto zwrócić uwagę na fakt, że dane z żyroskopu najlepiej predykują gest. Przypuszczeniem jest tutaj fakt, że wraz z ruchem dłoni, urządzenie IMU dokonuje obrotów.
+
 \section{Sprzęt}
 
 Do pomiarów wykorzystaliśmy smartfon Samsung Galaxy S10e 2019 wyposażony w czujnik IMU. Implementację modelu wykonaliśmy we frameworku PyTorch. Trening sieci neuronowej była wykonywany na Apple Macbook M1 16GB.
