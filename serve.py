@@ -38,4 +38,4 @@ cli.show_server_banner = lambda *x: None
 log = logging.getLogger('werkzeug')
 log.disabled = True
 print('Launching inference server...')
-app.run(host='0.0.0.0', port=3199)
+app.run(host='0.0.0.0', port=4199)

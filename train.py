@@ -57,6 +57,26 @@ validation_loss = []
 
 validation_acc = []
 
+
+class EarlyStopper:
+    def __init__(self, patience=1, min_delta=0):
+        self.patience = patience
+        self.min_delta = min_delta
+        self.counter = 0
+        self.min_validation_loss = float('inf')
+
+    def early_stop(self, validation_loss):
+        if validation_loss < self.min_validation_loss:
+            self.min_validation_loss = validation_loss
+            self.counter = 0
+        elif validation_loss > (self.min_validation_loss + self.min_delta):
+            self.counter += 1
+            if self.counter >= self.patience:
+                return True
+        return False
+
+
+early_stopper = EarlyStopper(patience=3, min_delta=10)
 for epoch in range(epochs):
     step_loss = []
     for batch_idx, (x, y) in enumerate(train_loader):
@@ -71,6 +91,8 @@ for epoch in range(epochs):
         optimizer.step()
         step_loss.append(loss.item())
         validation_step_loss = []
+        if early_stopper.early_stop(loss):
+            break
         if batch_idx % 100 == 0:
             model.eval()
 
