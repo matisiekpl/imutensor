@@ -83,9 +83,9 @@ Zebraliśmy dane dla następujących klas:
 
 Dane zostały załadowane do tensora o kszałcie $(B, T, C)$, gdzie
 \begin{itemize}
-\item $B$ - wsad
+\item $B$ - wsad (32)
 \item $T$ - oś czasu
-\item $C$ - cechy (3, ponieważ odrzuciliśmy pomiary z magnetometru i żyroskopu)
+\item $C$ - cechy (9)
 \end{itemize}  
 
 W przypadku, gdy sample były różnej długości, tensor został dopełniony zerami, by $T$ było równe 100. Dzięki temu tensor stawał się jednorodny [4]. 
@@ -130,7 +130,7 @@ Model osiąga zbieżność dostarczając przy tym jakościowe predykcje. Zadanie
 \end{figure}
 
 Użyty optymalizator to $Adam$ ze współczynnikiem uczenia $0.001$
- Uzyskana precyzja to ok. 90\% (rys. 3). Warto zaznaczyć, że aby osiągnąć takie wyniki musieliśmy uprościć ilość cech do 3, wybierając dane jedynie z żyroskopu. Użycie innych cech powodowało spadki jakości predykcji.
+ Uzyskana precyzja to ok. 90\% (rys. 3). Wykorzystaliśmy wszystkie cechy (3 osie żyroskopu, 3 osie akcelerometru, 3 osie magnetometru)
 
  \begin{figure}[H]
   \includegraphics[height=9cm]{acc.png}
@@ -162,10 +162,6 @@ Dzięki temu byliśmy w stanie szybko ewaluować jakość modelu. Aplikacja mobi
 \section{Wnioski}
 
 Na podstawie metryk modelu można stwierdzić, że decyzja o wykorzystaniu rekurencyjnej sieci neuronowej była trafna. Zaproponowana sieć neuronowa cechuje się wysoką skutecznością w zadaniu klasyfikacji ruchów z urządzenia IMU.
-
-\section{Dyskusja}
-
-Warto zwrócić uwagę na fakt, że dane z żyroskopu najlepiej predykują gest. Przypuszczeniem jest tutaj fakt, że wraz z ruchem dłoni, urządzenie IMU dokonuje obrotów.
 
 \section{Sprzęt}
 
