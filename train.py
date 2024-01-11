@@ -141,7 +141,6 @@ plt.savefig('acc.png')
 
 
 model = Net(3).to(device)
-model.load_state_dict(torch.load('model.pt'))
 model.eval()
 
 app = flask.Flask(__name__)
