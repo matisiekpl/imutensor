@@ -32,7 +32,7 @@ for class_folder in os.listdir(data_folder):
             df = df.iloc[:, feature_filter[0]:feature_filter[1]]
             df = (df-df.min())/(df.max()-df.min())
             data_array = df.to_numpy()
-            result_array = np.zeros((100, 3))
+            result_array = np.zeros((100, 9))
             result_array[:data_array.shape[0], :] = data_array
             data.append(result_array)
             labels.append(class_label)
@@ -154,7 +154,7 @@ def interference():
     df = df.iloc[:, feature_filter[0]:feature_filter[1]]
     df = (df-df.min())/(df.max()-df.min())
     data_array = df.to_numpy()
-    result_array = np.zeros((100, 3))
+    result_array = np.zeros((100, 9))
     result_array[:data_array.shape[0], :] = data_array
     data = torch.Tensor(result_array).unsqueeze(0).to(device)
     output = model(data)
