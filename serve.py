@@ -8,6 +8,7 @@ import pandas as pd
 from config import feature_filter, device
 import logging
 import sys
+import numpy as np
 
 DEVICE = 'cpu'
 
@@ -26,7 +27,10 @@ def interference():
     df = df.iloc[:, :-1]
     df = df.iloc[:, feature_filter[0]:feature_filter[1]]
     df = (df-df.min())/(df.max()-df.min())
-    data = torch.Tensor(df.to_numpy()).unsqueeze(0).to(device)
+    data_array = df.to_numpy()
+    result_array = np.zeros((100, 3))
+    result_array[:data_array.shape[0], :] = data_array
+    data = torch.Tensor(result_array).unsqueeze(0).to(device)
     output = model(data)
     output = output.cpu().detach().numpy()
     print(output)
@@ -37,5 +41,5 @@ cli = sys.modules['flask.cli']
 cli.show_server_banner = lambda *x: None
 log = logging.getLogger('werkzeug')
 log.disabled = True
-print('Launching inference server...')
+print('Inference server listening...')
 app.run(host='0.0.0.0', port=4199)
