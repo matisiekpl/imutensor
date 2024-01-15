@@ -109,7 +109,7 @@ for epoch in range(epochs):
             validation_loss.append(np.array(validation_step_loss).mean())
     training_loss.append(np.array(step_loss).mean())
 
-torch.save(model.state_dict(), 'model.pt')
+torch.save(model, 'model.pt')
 
 plt.title('Loss')
 plt.plot(training_loss, label='train_loss')

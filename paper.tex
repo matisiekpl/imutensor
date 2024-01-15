@@ -37,7 +37,7 @@ IMU jest powszechnie stosowane w lotnictwie, robotyce, wirtualnej rzeczywistośc
 \section{Wstęp}
 
 \section{Zbiór danych}
-Dane zostały zebrane z urządzenia Samsung Galaxy S10e 2019. Każdy ruch został zebrany ręcznie a seria danych z czujników była zapisywana do pliku $csv$ o ilości wierszy takiej jak ilość kroków czasowych. Interwał próbkowania pomiaru z czujnika został ustawiony na $50ms$. To znaczy, że w ciągu każdej sekundy trwania ruchu następowało 20 odczytów. Ustalona lista ruchów pokazuje tabela 1.
+Dane zostały zebrane z urządzenia Samsung Galaxy S10e 2019. W procesie uczestniczyły dwie osoby, które wykonywały ruch. Każdy ruch został zebrany ręcznie a seria danych z czujników była zapisywana do pliku $csv$ o ilości wierszy takiej jak ilość kroków czasowych. Interwał próbkowania pomiaru z czujnika został ustawiony na $50ms$. To znaczy, że w ciągu każdej sekundy trwania ruchu następowało 20 odczytów. Ustalona lista ruchów pokazuje tabela 1. 
 
 Ruchy były wykonywane przy włączonej aplikacji mobilnej napisanej w Kotlinie (rys. 2).
 
@@ -48,7 +48,7 @@ Ruchy były wykonywane przy włączonej aplikacji mobilnej napisanej w Kotlinie 
 \caption{Aplikacja mobilna do zbierania danych z czujnika IMU}
 \end{figure}
 
-Dane były wysyłane na zdalny serwer na którym był uruchomiony mikroserwis HTTP napisany w Go. Mikroserwis zbierał dane i zapisywał je na dysk. Dzięki temu zbieranie danych odbywało się sprawnie, a mikroserwis dawał nam informacje o ilości ruchów dla każdej z klas. Przykładowy fragment pliku $csv$ (oraz jego wizualizacja na rys. 1):
+Dane były wysyłane na zdalny serwer na którym był uruchomiony mikroserwis HTTP napisany w Go. Mikroserwis zbierał dane i zapisywał je na dysk. Dzięki temu zbieranie danych odbywało się sprawnie, a mikroserwis monitorował ilość zebranych danych dla każdej z klas. Przykładowy fragment pliku $csv$ (oraz jego wizualizacja na rys. 1):
 
 \begin{verbatim}  
 gyro_x;gyro_y;gyro_z;magnetometer_x;...
@@ -96,7 +96,7 @@ Dane zostały załadowane do tensora o kszałcie $(B, T, C)$, gdzie
 \item $C$ - cechy (9)
 \end{itemize}  
 
-W przypadku, gdy próbki były różnej długości, tensor został dopełniony zerami, by $T$ było równe 100. Dzięki temu kszałt tensora odpowiadał wejściu sieci neuronowej.
+W przypadku, gdy próbki były różnej długości, tensor został dopełniony zerami, by $T$ było równe 100. Dzięki temu kszałt tensora odpowiadał wejściu sieci neuronowej. Zbiór treningowy stanowił 80\% całego zbioru danych, a zbiór walidacyjny - 20\%.
 
 \section{Model}
 
