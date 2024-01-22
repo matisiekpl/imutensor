@@ -31,10 +31,13 @@ Klasyfikator ruchów czujnika IMU na podstawie rekurencyjnej sieci neuronowej
 
 \section*{Abstrakt}
 
-Przedmiotem tego artykułu jest omówienie realizacji zadania klasyfikacji aktywności ruchowych człowieka rejestrowanych przy pomocy czujnika IMU (Inertial Measurement Unit). Czujnik IMU mierzy przyśpieszenia postępowe i kątowe używając żyroskopu, akcelerometru i magnetometru. 
-IMU jest powszechnie stosowane w lotnictwie, robotyce, wirtualnej rzeczywistości i medycynie. W lotnictwie umożliwia precyzyjne sterowanie statkami powietrznymi, a w robotyce wspomaga autonomiczne poruszanie się robotów. Jednym z zastosowań klasyfikatora ruchów może być detekcja przeciągnięcia samolotu. Z kolei w motoryzacji, IMU znajduje użycie w systemach kontroli stabilności pojazdów oraz w zaawansowanych systemach wspomagania kierowcy, które poprawiają bezpieczeństwo. Proponowana jest realizacja klasyfikatora pięciu z góry ustalonych ruchów używając rekurencyjną sieć neuronowej. 
+Artykuł przedstawia realizację klasyfikatora ruchów człowieka na podstawie danych z czujnika IMU (Inertial Measurement Unit) za pomocą rekurencyjnej sieci neuronowej. Czujnik IMU, mierzący przyśpieszenia postępowe i kątowe, jest powszechnie stosowany w wielu dziedzinach, takich jak lotnictwo, robotyka, wirtualna rzeczywistość i medycyna. W artykule omówiono proces zbierania danych z urządzenia Samsung Galaxy S10e 2019, a następnie wykorzystanie tych danych do trenowania sieci neuronowej w celu klasyfikacji pięciu z góry ustalonych ruchów. Wyniki mogą mieć zastosowanie w różnych dziedzinach, w tym w detekcji przeciągnięcia samolotu, kontroli stabilności pojazdów i zaawansowanych systemach wspomagania kierowcy. Zaproponowana architektura rekurencyjnej sieci neuronowej osiąga 96\% precyzji klasyfikacji ruchów.
 
 \section{Wstęp}
+
+Czujnik IMU mierzy przyśpieszenia postępowe i kątowe używając żyroskopu, akcelerometru i magnetometru. 
+IMU jest powszechnie stosowane w lotnictwie, robotyce, wirtualnej rzeczywistości i medycynie. W lotnictwie umożliwia precyzyjne sterowanie statkami powietrznymi, a w robotyce wspomaga autonomiczne poruszanie się robotów. Jednym z zastosowań klasyfikatora ruchów może być detekcja przeciągnięcia samolotu. Z kolei w motoryzacji, IMU znajduje użycie w systemach kontroli stabilności pojazdów oraz w zaawansowanych systemach wspomagania kierowcy, które poprawiają bezpieczeństwo. Proponowana jest realizacja klasyfikatora pięciu z góry ustalonych ruchów używając rekurencyjną sieć neuronowej. 
+
 
 \section{Zbiór danych}
 Dane zostały zebrane z urządzenia Samsung Galaxy S10e 2019. W procesie uczestniczyły dwie osoby, które wykonywały ruch. Każdy ruch został zebrany ręcznie a seria danych z czujników była zapisywana do pliku $csv$ o ilości wierszy takiej jak ilość kroków czasowych. Interwał próbkowania pomiaru z czujnika został ustawiony na $50ms$. To znaczy, że w ciągu każdej sekundy trwania ruchu następowało 20 odczytów. Ustalona lista ruchów pokazuje tabela 1. 
@@ -128,7 +131,7 @@ class Net(nn.Module):
 
 \section{Obserwacje}
 
-Model jest w stanie rozwiązać problem klasyfikacji i dostarcza zadowalających rezultatów. Zadanie znajdowania zależności między odczytami daleko od siebie nie jest trywialne, aczkolwiek optymalizator jest w stanie znaleźć odpowiedni kierunek by dostosować wagi sieci (rys. 3).
+Model jest w stanie rozwiązać problem klasyfikacji i dostarcza zadowalających rezultatów. Znajdowanie daleko-zasięgowych zależności w danych często stanowi trudność dla sieci gęstych. W przypadku rekurencyjnej sieci neuronowej optymalizator jest w stanie znaleźć odpowiedni kierunek by dostosować wagi sieci (rys. 3).
 
 
 \begin{figure}[H]
@@ -138,7 +141,7 @@ Model jest w stanie rozwiązać problem klasyfikacji i dostarcza zadowalających
 \end{figure}
 
 Użyty optymalizator to $Adam$ ze współczynnikiem uczenia $0.001$
- Uzyskana precyzja klasyfikacji ruchów to 96\% (rys. 4). Sieć wykorzystuje wszystkie 9 cech (3 osie żyroskopu, 3 osie akcelerometru, 3 osie magnetometru). Macierz błędów widoczna na rys. 5.
+ Spośród 5 treningów sieci, uzyskana precyzja klasyfikacji ruchów najlepszej z nich to 96\% (rys. 4). Sieć wykorzystuje wszystkie 9 cech (3 osie żyroskopu, 3 osie akcelerometru, 3 osie magnetometru). Macierz błędów widoczna na rys. 5.
 
  \begin{figure}[H]
   \includegraphics[height=9cm]{acc.png}
