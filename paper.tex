@@ -31,16 +31,16 @@ Klasyfikator ruchów czujnika IMU na podstawie rekurencyjnej sieci neuronowej
 
 \section*{Abstrakt}
 
-Artykuł przedstawia realizację klasyfikatora ruchów człowieka na podstawie danych z czujnika IMU (Inertial Measurement Unit) za pomocą rekurencyjnej sieci neuronowej. Czujnik IMU, mierzący przyśpieszenia postępowe i kątowe, jest powszechnie stosowany w wielu dziedzinach, takich jak lotnictwo, robotyka, wirtualna rzeczywistość i medycyna. W artykule omówiono proces zbierania danych z urządzenia Samsung Galaxy S10e 2019, a następnie wykorzystanie tych danych do trenowania sieci neuronowej w celu klasyfikacji pięciu z góry ustalonych ruchów. Wyniki mogą mieć zastosowanie w różnych dziedzinach, w tym w detekcji przeciągnięcia samolotu, kontroli stabilności pojazdów i zaawansowanych systemach wspomagania kierowcy. Zaproponowana architektura rekurencyjnej sieci neuronowej osiąga 96\% precyzji klasyfikacji ruchów.
+Artykuł przedstawia realizację klasyfikatora ruchów człowieka na podstawie danych z czujnika IMU (Inertial Measurement Unit) za pomocą rekurencyjnej sieci neuronowej. Czujnik IMU, mierzący przyśpieszenia postępowe i kątowe, jest powszechnie stosowany w wielu dziedzinach, takich jak lotnictwo, robotyka, wirtualna rzeczywistość i medycyna. W artykule omówiono proces zbierania danych z urządzenia Samsung Galaxy S10e 2019, a następnie wykorzystanie tych danych do trenowania sieci neuronowej w celu klasyfikacji pięciu z góry ustalonych ruchów. Wyniki mogą mieć zastosowanie w różnych dziedzinach, w tym w detekcji przeciągnięcia samolotu, kontroli stabilności pojazdów i zaawansowanych systemach wspomagania kierowcy. Zaproponowana architektura rekurencyjnej sieci neuronowej osiąga 96\% precyzji w zadaniu klasyfikacji ruchów.
 
 \section{Wstęp}
 
 Czujnik IMU mierzy przyśpieszenia postępowe i kątowe używając żyroskopu, akcelerometru i magnetometru. 
-IMU jest powszechnie stosowane w lotnictwie, robotyce, wirtualnej rzeczywistości i medycynie. W lotnictwie umożliwia precyzyjne sterowanie statkami powietrznymi, a w robotyce wspomaga autonomiczne poruszanie się robotów. Jednym z zastosowań klasyfikatora ruchów może być detekcja przeciągnięcia samolotu. Z kolei w motoryzacji, IMU znajduje użycie w systemach kontroli stabilności pojazdów oraz w zaawansowanych systemach wspomagania kierowcy, które poprawiają bezpieczeństwo. Proponowana jest realizacja klasyfikatora pięciu z góry ustalonych ruchów używając rekurencyjną sieć neuronowej. 
+IMU jest powszechnie stosowane w lotnictwie, robotyce, wirtualnej rzeczywistości i medycynie. W lotnictwie umożliwia precyzyjne sterowanie statkami powietrznymi, natomiast w robotyce wspomaga autonomiczne poruszanie się robotów. Jednym z zastosowań klasyfikatora ruchów może być detekcja przeciągnięcia samolotu. Z kolei w motoryzacji, IMU znajduje użycie w systemach kontroli stabilności pojazdów oraz w zaawansowanych systemach wspomagania kierowcy, które poprawiają bezpieczeństwo. Zaproponowana została realizacja klasyfikatora pięciu z góry ustalonych ruchów przy użyciu rekurencyjnej sieci neuronowej. 
 
 
 \section{Zbiór danych}
-Dane zostały zebrane z urządzenia Samsung Galaxy S10e 2019. W procesie uczestniczyły dwie osoby, które wykonywały ruch. Każdy ruch został zebrany ręcznie a seria danych z czujników była zapisywana do pliku $csv$ o ilości wierszy takiej jak ilość kroków czasowych. Interwał próbkowania pomiaru z czujnika został ustawiony na $50ms$. To znaczy, że w ciągu każdej sekundy trwania ruchu następowało 20 odczytów. Ustalona lista ruchów pokazuje tabela 1. 
+Dane zostały zebrane z urządzenia Samsung Galaxy S10e 2019. W procesie uczestniczyły dwie osoby, które wykonywały ruch. Każdy ruch został zebrany ręcznie, a seria danych z czujników była zapisywana do pliku $csv$ o ilości wierszy takiej jak ilość kroków czasowych. Interwał próbkowania pomiaru z czujnika został ustawiony na $50ms$. To oznacza, że w ciągu każdej sekundy trwania ruchu następowało 20 odczytów. Ustaloną listę ruchów pokazuje tabela 1. 
 
 Ruchy były wykonywane przy włączonej aplikacji mobilnej napisanej w Kotlinie (rys. 2).
 
@@ -51,7 +51,7 @@ Ruchy były wykonywane przy włączonej aplikacji mobilnej napisanej w Kotlinie 
 \caption{Aplikacja mobilna do zbierania danych z czujnika IMU}
 \end{figure}
 
-Dane były wysyłane na zdalny serwer na którym był uruchomiony mikroserwis HTTP napisany w Go. Mikroserwis zbierał dane i zapisywał je na dysk. Dzięki temu zbieranie danych odbywało się sprawnie, a mikroserwis monitorował ilość zebranych danych dla każdej z klas. Przykładowy fragment pliku $csv$ (oraz jego wizualizacja na rys. 1):
+Dane wysyłano na zdalny serwer, na którym został uruchomiony mikroserwis HTTP napisany w Go. Mikroserwis zbierał dane i zapisywał je na dysk. Dzięki temu zbieranie danych odbywało się sprawnie, a mikroserwis monitorował ilość zebranych danych dla każdej z klas. Oto przykładowy fragment pliku $csv$ (oraz jego wizualizacja na rys. 1):
 
 \begin{verbatim}  
 gyro_x;gyro_y;gyro_z;magnetometer_x;...
@@ -99,15 +99,14 @@ Dane zostały załadowane do tensora o kszałcie $(B, T, C)$, gdzie
 \item $C$ - cechy (9)
 \end{itemize}  
 
-W przypadku, gdy próbki były różnej długości, tensor został dopełniony zerami, by $T$ było równe 100. Dzięki temu kszałt tensora odpowiadał wejściu sieci neuronowej. Zbiór treningowy stanowił 80\% całego zbioru danych, a zbiór walidacyjny - 20\%.
+W przypadku, gdy próbki były różnej długości, tensor dopełniany był zerami, by $T$ było równe 100. Dzięki temu kszałt tensora odpowiadał wejściu sieci neuronowej. Zbiór treningowy stanowił 80\% całego zbioru danych, a zbiór walidacyjny - 20\%.
 
 \section{Model}
 
-Ze względu na to, że zadanie klasyfikacji ruchów ma być niezależne od czasu, tzn. że ruch może zawierać dowolną ilość próbek zdecydowaliśmy się użyć rekurencyjnej sieci neuronowej z komórką LSTM \cite{staudemeyer2019understanding}.
-Long Short-Term Memory (LSTM) to rodzaj architektury sieci neuronowej rekurencyjnej (RNN), zaprojektowanej w celu przezwyciężenia ograniczeń tradycyjnych RNN w przechwytywaniu i uczeniu się długoterminowych zależności w danych sekwencyjnych. LSTMy zostały wprowadzone przez Seppa Hochreitera i Jürgena Schmidhubera w 1997 roku \cite{hochreiter1997long}. Chcemy, aby sieć neuronowa nauczyła się zaleności w czasie pomiędzy zmianami w przyśpieszeniach czujnika \cite{rivera2017recognition} \cite{ashry2018lstm}. W związku z tym w pierwszym podejściu zdecydowaliśmy sprawdzić architekturę składającą się z 32 komórek LSTM oraz dwóch warstw gęstych o wielkości 24 i 5. Na ostatniej warstwie została zastosowana funkcja aktywacji $softmax$ by uzyskać dystrybucję prawdopodobieństwa klas (realizuje to $CrossEntropyLoss$)
+Ze względu na to, że zadanie klasyfikacji ruchów miało być niezależne od czasu, tzn. że ruch mógł zawierać dowolną ilość próbek zadecydowano o użyciu rekurencyjnej sieci neuronowej z komórką LSTM \cite{staudemeyer2019understanding}.
+Long Short-Term Memory (LSTM) to rodzaj architektury sieci neuronowej rekurencyjnej (RNN), zaprojektowanej w celu przezwyciężenia ograniczeń tradycyjnych RNN w przechwytywaniu i uczeniu się długoterminowych zależności w danych sekwencyjnych. LSTMy zostały wprowadzone przez Seppa Hochreitera i Jürgena Schmidhubera w 1997 roku \cite{hochreiter1997long}. Założeniem było, aby sieć neuronowa nauczyła się zależności w czasie pomiędzy zmianami w przyśpieszeniach czujnika \cite{rivera2017recognition} \cite{ashry2018lstm}. W związku z tym w pierwszym podejściu zdecydowano sprawdzić architekturę składającą się z 32 komórek LSTM oraz dwóch warstw gęstych o wielkości 24 i 5. Na ostatniej warstwie została zastosowana funkcja aktywacji $softmax$ by uzyskać dystrybucję prawdopodobieństwa klas (realizuje to $CrossEntropyLoss$)
 
-
-Po kilku próbach znaleźlimy hiperparametry modelu, które dają najlepsze zachowanie sieci. LSTM musi mieć 22 komórki, a warstwa gęsta musi mieć 32 neurony. Przeszukiwanie przestrzeni hiperparametrów zostało zrealizowane metodyką gridsearch. Finalny model ma następującą architekturę:
+Po 5 próbach zostały znalezione hiperparametry modelu, które dawały najlepsze zachowanie sieci. Warstwa LSTM musiała mieć 22 komórki, a warstwa gęsta - 32 neurony. Przeszukiwanie przestrzeni hiperparametrów zostało zrealizowane metodyką gridsearch. Finalny model ma następującą architekturę:
 
 \begin{python}
 import torch
@@ -131,7 +130,7 @@ class Net(nn.Module):
 
 \section{Obserwacje}
 
-Model jest w stanie rozwiązać problem klasyfikacji i dostarcza zadowalających rezultatów. Znajdowanie daleko-zasięgowych zależności w danych często stanowi trudność dla sieci gęstych. W przypadku rekurencyjnej sieci neuronowej optymalizator jest w stanie znaleźć odpowiedni kierunek by dostosować wagi sieci (rys. 3).
+Model był w stanie rozwiązać problem klasyfikacji i dostarczał zadowalających rezultatów. Znajdowanie daleko-zasięgowych zależności w danych często stanowi trudność dla sieci gęstych. W przypadku rekurencyjnej sieci neuronowej optymalizator był w stanie znaleźć odpowiedni kierunek by dostosować wagi sieci (rys. 3).
 
 
 \begin{figure}[H]
@@ -141,7 +140,7 @@ Model jest w stanie rozwiązać problem klasyfikacji i dostarcza zadowalających
 \end{figure}
 
 Użyty optymalizator to $Adam$ ze współczynnikiem uczenia $0.001$
- Spośród 5 treningów sieci, uzyskana precyzja klasyfikacji ruchów najlepszej z nich to 96\% (rys. 4). Sieć wykorzystuje wszystkie 9 cech (3 osie żyroskopu, 3 osie akcelerometru, 3 osie magnetometru). Macierz błędów widoczna na rys. 5.
+ Spośród 5 treningów sieci, najwyższą precyzję klasyfikacji, jaką dostarczył model, odnotowano na poziomie 96\% (rys. 4). Sieć wykorzystywała wszystkie 9 cech (3 osie żyroskopu, 3 osie akcelerometru, 3 osie magnetometru). Macierz błędów jest widoczna na rys. 5.
 
  \begin{figure}[H]
   \includegraphics[height=9cm]{acc.png}
@@ -155,19 +154,19 @@ Użyty optymalizator to $Adam$ ze współczynnikiem uczenia $0.001$
   \caption{Wykres precyzji na zbiorze walidacyjnym}
 \end{figure}
 
-Co więcej, dostrzegliśmy różnice w zakresach odczytów używając kilku czujników IMU. Pomiary znacząco różniły się od siebie pomiędzy markami i modelami smartfonów. W związku z tym całe badanie oparliśmy na jednym urządzeniu Samsung Galaxy S10e.
+W trakcie opracowywania modelu, odnotowano znaczne różnice w zakresach odczytów w zależności od producenta i modelu smartfonu. W związku z tym całe badanie zostało oparte na jednym urządzeniu Samsung Galaxy S10e.
 
 \section{Ewaluacja modelu}
 
-Ze względu na to, że ewaluacja na smartfonie w przypadku rekurencyjnych sieci neuronowych jest trudna, sieć neuronowa została przeniesiona na serwer VPS. Zastosowaliśmy iteracyjną metodologię prac nad projektem: 
+Ze względu na to, że ewaluacja na smartfonie w przypadku rekurencyjnych sieci neuronowych jest trudna, sieć neuronowa została przeniesiona na serwer VPS. Zastosowana została iteracyjna metodologia prac nad projektem: 
 
 \begin{enumerate}
-  \item Wytrenuj model na lokalnym sprzęcie (laptop).
-  \item Zbuduj obraz Dockera z wagami zawartymi w środku i wypchnij go do rejestru
-  \item Na serwerze zdalnym: ściągnij obraz i uruchom serwer Flask
+  \item Wytrenowanie model na lokalnym sprzęcie (laptop).
+  \item Budowa obrazu Dockera z wagami zawartymi w środku i wysłanie go do rejestru
+  \item Na serwerze zdalnym: pobranie obrazu i uruchomienie serwera Flask
 \end{enumerate}
 
-Dzięki temu byliśmy w stanie szybko ewaluować jakość modelu. Aplikacja mobilna wykonuje żądanie HTTP POST do serwera VPS, by ten zwrócił wyniki.
+Użycie takiej metodologii pozwoliło szybko systematycznie ulepszać jakość modelu. Aplikacja mobilna wykonuje żądanie HTTP POST do serwera VPS, by ten zwrócił wyniki.
 
 \section{Wnioski}
 
@@ -175,7 +174,7 @@ Na podstawie wykresu funkcji straty i wykresu funkcji precyzji modelu można stw
 
 \section{Sprzęt}
 
-Do pomiarów wykorzystaliśmy smartfon Samsung Galaxy S10e 2019 wyposażony w czujnik IMU. Implementację modelu wykonaliśmy we frameworku PyTorch. Trening sieci neuronowej była wykonywany na Apple Macbook M1 16GB.
+Do pomiarów został wykorzystany smartfon Samsung Galaxy S10e 2019 wyposażony w czujnik IMU. Implementację modelu została wykonana we frameworku PyTorch. Trening sieci neuronowej odbywał się na Apple Macbook M1 16GB.
 
 \bibliographystyle{IEEEtran}
 \bibliography{paper.bib}
