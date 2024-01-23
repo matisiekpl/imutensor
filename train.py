@@ -131,6 +131,9 @@ plt.figure(figsize=(12, 7))
 sn.heatmap(df_cm, annot=True)
 plt.savefig('conf.png')
 
+if os.environ.get('DOCKER') == 'true':
+    exit(0)
+
 model.eval()
 
 app = flask.Flask(__name__)

@@ -58,5 +58,5 @@ Model is trained inside `docker build` and saved into `model.pt` weights files. 
 ## Running
 ```bash
 docker build -t imutensor .
-docker run -p 3199:3199 --name imutensor -d imutensor
+docker run -p 4199:4199 --name imutensor -d imutensor
 ```
