@@ -10,6 +10,8 @@ LSTM-based classifier written in PyTorch for detecting predefined gestures from 
 ## Mobile app
 You can download mobile app with `.apk` file. [Download APK](app.apk)
 
+Mobile app source code: https://github.com/maciekpawlowski1/ImuCollector
+
 ## Running
 ```bash
 docker build -t imutensor .
