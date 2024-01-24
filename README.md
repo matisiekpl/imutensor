@@ -6,6 +6,16 @@ LSTM-based classifier written in PyTorch for detecting predefined gestures from 
 > - Mateusz Woźniak
 > - Maciej Pawłowski
 
+
+## Mobile app
+You can download mobile app with `.apk` file. [Download APK](app.apk)
+
+## Running
+```bash
+docker build -t imutensor .
+docker run -p 4199:4199 --name imutensor -d imutensor
+```
+
 ## Task
 
 This machine learning model takes imu data as a series in `.csv` in format like:
@@ -29,7 +39,7 @@ classes = {
 ## Dataset collection
 We developed mobile app for Android in Kotlin that grabs data from imu sensor and uploads it into Golang microservice which archives files.
 
-![screenshot.jpg](screenshot.jpg)
+![s1.jpg](s1.jpg)
 
 ## Model
 We are using LSTM layer with two Linear transformations. Recurrent neural network is used, because gesture-classification task is time-invariant (`.csv` files has diffrent number of timesteps).
@@ -54,9 +64,3 @@ We are able to achieve `~95%` accuracy on validation dataset using gyroscope-onl
 
 ## Inference
 Model is trained inside `docker build` and saved into `model.pt` weights files. `serve.py` file launches `flask` HTTP server which exposes `POST /inferece` endpoint on port `4199`.
-
-## Running
-```bash
-docker build -t imutensor .
-docker run -p 4199:4199 --name imutensor -d imutensor
-```
