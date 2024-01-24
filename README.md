@@ -18,6 +18,13 @@ docker build -t imutensor .
 docker run -p 4199:4199 --name imutensor -d imutensor
 ```
 
+or:
+
+```bash
+pip3 install torch numpy pandas matplotlib flask seaborn scikit-learn
+python3 train.py
+```
+
 ## Task
 
 This machine learning model takes imu data as a series in `.csv` in format like:
