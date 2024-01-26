@@ -36,13 +36,13 @@ Artykuł przedstawia realizację klasyfikatora ruchów człowieka na podstawie d
 \section{Wstęp}
 
 Czujnik IMU mierzy przyśpieszenia postępowe i kątowe używając żyroskopu, akcelerometru i magnetometru. 
-IMU jest powszechnie stosowane w lotnictwie, robotyce, wirtualnej rzeczywistości i medycynie. W lotnictwie umożliwia precyzyjne sterowanie statkami powietrznymi, natomiast w robotyce wspomaga autonomiczne poruszanie się robotów. Jednym z zastosowań klasyfikatora ruchów może być detekcja przeciągnięcia samolotu. Z kolei w motoryzacji, IMU znajduje użycie w systemach kontroli stabilności pojazdów oraz w zaawansowanych systemach wspomagania kierowcy, które poprawiają bezpieczeństwo. Zaproponowana została realizacja klasyfikatora pięciu z góry ustalonych ruchów przy użyciu rekurencyjnej sieci neuronowej. 
+IMU jest powszechnie stosowane w lotnictwie, robotyce, wirtualnej rzeczywistości i medycynie. W lotnictwie umożliwia precyzyjne sterowanie statkami powietrznymi, natomiast w robotyce wspomaga autonomiczne poruszanie się robotów. Jednym z zastosowań klasyfikatora ruchów może być detekcja przeciągnięcia samolotu. Z kolei w motoryzacji, IMU znajduje użycie w systemach kontroli stabilności pojazdów oraz w zaawansowanych systemach wspomagania kierowcy, które poprawiają bezpieczeństwo. Celem projektu była realizacja klasyfikatora pięciu z góry ustalonych ruchów przy użyciu rekurencyjnej sieci neuronowej. Zakres projektu obejmował zebranie zbioru danych, implementację modelu, trening i ewaluację modelu. 
 
 
 \section{Zbiór danych}
 Dane zostały zebrane z urządzenia Samsung Galaxy S10e 2019. W procesie uczestniczyły dwie osoby, które wykonywały ruch. Każdy ruch został zebrany ręcznie, a seria danych z czujników była zapisywana do pliku $csv$ o ilości wierszy takiej jak ilość kroków czasowych. Interwał próbkowania pomiaru z czujnika został ustawiony na $50ms$. To oznacza, że w ciągu każdej sekundy trwania ruchu następowało 20 odczytów. Ustaloną listę ruchów pokazuje tabela 1. 
 
-Ruchy były wykonywane przy włączonej aplikacji mobilnej napisanej w Kotlinie (rys. 2).
+Ruchy były wykonywane przy włączonej aplikacji mobilnej napisanej w Kotlinie (rys. 1).
 
 \begin{figure}[h]
 \label{fig:screenshot}
@@ -51,7 +51,9 @@ Ruchy były wykonywane przy włączonej aplikacji mobilnej napisanej w Kotlinie 
 \caption{Aplikacja mobilna do zbierania danych z czujnika IMU}
 \end{figure}
 
-Dane wysyłano na zdalny serwer, na którym został uruchomiony mikroserwis HTTP napisany w Go. Mikroserwis zbierał dane i zapisywał je na dysk. Dzięki temu zbieranie danych odbywało się sprawnie, a mikroserwis monitorował ilość zebranych danych dla każdej z klas. Oto przykładowy fragment pliku $csv$ (oraz jego wizualizacja na rys. 1):
+\pagebreak
+
+Dane wysyłano na zdalny serwer, na którym został uruchomiony mikroserwis HTTP napisany w Go. Mikroserwis zbierał dane i zapisywał je na dysk. Dzięki temu zbieranie danych odbywało się sprawnie, a mikroserwis monitorował ilość zebranych danych dla każdej z klas. Oto przykładowy fragment pliku $csv$ (oraz jego wizualizacja na rys. 2):
 
 \begin{verbatim}  
 gyro_x;gyro_y;gyro_z;magnetometer_x;...
